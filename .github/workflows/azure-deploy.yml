@@ -1,4 +1,3 @@
-
 name: Deploy to Azure
 
 on:
@@ -8,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    run-on: windows-latest
+    runs-on: windows-latest
     
     steps:
     - name: Checkout code
@@ -22,7 +21,7 @@ jobs:
     - name: Log in to Azure 
       uses: azure/login@v1 
       with:
-        creds: ${{ secret.AZURE_CREDENTIALS}}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Terraform Init
       run: terraform init 
@@ -30,7 +29,7 @@ jobs:
     - name: Terraform Plan
       run: terraform plan -output=tfplan
 
-    - name: terraform Apply
+    - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
 
     - name: Clean up Terraform files
