@@ -1,0 +1,39 @@
+
+name: Deploy to Azure
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    run-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.15.5
+
+    - name: Log in to Azure 
+      uses: azure/login@v1 
+      with:
+        creds: ${{ secret.AZURE_CREDENTIALS}}
+
+    - name: Terraform Init
+      run: terraform init 
+
+    - name: Terraform Plan
+      run: terraform plan -output=tfplan
+
+    - name: terraform Apply
+      run: terraform apply -auto-approve tfplan
+
+    - name: Clean up Terraform files
+      run: |
+        rm -rf .terraform
+        rm tfplan
